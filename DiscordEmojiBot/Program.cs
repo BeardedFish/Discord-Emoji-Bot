@@ -13,8 +13,16 @@ internal class Program
     private DiscordSocketClient? _discordSocketClient;
     private InteractionService? _interactionService;
 
+    private async void OnProcessExit(object? sender, EventArgs e)
+    {
+        await _discordSocketClient!.StopAsync();
+        await _discordSocketClient!.DisposeAsync();
+    }
+
     public void Initialize()
     {
+        AppDomain.CurrentDomain.ProcessExit += new(OnProcessExit);
+
         var _builder = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile(path: "config.json");
@@ -37,7 +45,7 @@ internal class Program
     private ServiceProvider ConfigureServices()
     {
         return new ServiceCollection()
-            .AddSingleton(_config)
+            .AddSingleton(_config!)
             .AddSingleton<DiscordSocketClient>()
             .AddSingleton(serviceProvider => new InteractionService(serviceProvider.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<CommandHandlerService>()
@@ -50,7 +58,7 @@ internal class Program
 
         using ServiceProvider services = ConfigureServices();
 
-        _discordSocketClient = services.GetRequiredService<DiscordSocketClient>(); ;
+        _discordSocketClient = services.GetRequiredService<DiscordSocketClient>();
         _interactionService = services.GetRequiredService<InteractionService>();
 
         _discordSocketClient.Ready += OnDiscordSocketClientReadyAsync;
