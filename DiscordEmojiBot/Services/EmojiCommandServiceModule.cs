@@ -1,4 +1,7 @@
-﻿using Discord.Interactions;
+﻿using Discord;
+using Discord.Commands;
+using Discord.Interactions;
+using Discord.WebSocket;
 using System.Text;
 
 namespace DiscordEmojiBot.Services;
@@ -12,6 +15,9 @@ public sealed class EmojiCommandServiceModule : InteractionModuleBase<SocketInte
     private static readonly Random Random = new();
 
     private CommandHandlerService _commandHandlerService;
+
+
+
 
     public EmojiCommandServiceModule(CommandHandlerService commandHandlerService)
     {
@@ -167,5 +173,39 @@ public sealed class EmojiCommandServiceModule : InteractionModuleBase<SocketInte
         }
 
         await SendMessageResponse(stringBuilder.ToString());
+    }
+
+    //[SlashCommand("stats", "I find out your bot stats. :blush:")]
+
+    //public async Task EmojiStats(IUser user)
+    //{
+    //    var socketUser = (user as SocketGuildUser);
+    //    string roleList = String.Join(",\n", socketUser.Roles.Where(x => !x.IsEveryone).Select(x => x.Mention));
+
+    //    var embedBuiler = new EmbedBuilder()
+    //    .WithAuthor(user.ToString(), user.GetAvatarUrl() ?? user.GetDefaultAvatarUrl())
+    //    .WithTitle($"{user.Username} Roles")
+    //    .WithDescription(roleList)
+    //    .WithColor(Color.Green)
+    //    .WithCurrentTimestamp();
+
+    //    //stringBuilder.Append(' ');
+    //    await RespondAsync(embed: embedBuiler.Build());
+
+    //}
+
+    [SlashCommand("stats", "I find out your bot stats. :blush:")]
+
+    //find a way to get guild info 
+    public async Task EmojiStats(IChannel channel)
+    {
+        StringBuilder stringBuilder = new();
+        //var guild = _commandHandlerService as SocketGuild;
+        var socketChannel = (channel as SocketChannel);
+
+        
+        stringBuilder.Append(channel);
+        await SendMessageResponse(stringBuilder.ToString());
+
     }
 }
