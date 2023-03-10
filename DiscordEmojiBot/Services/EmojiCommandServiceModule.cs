@@ -3,6 +3,10 @@ using Discord.Commands;
 using Discord.Interactions;
 using Discord.WebSocket;
 using System.Text;
+using OpenAI_API;
+using System.IO;
+using System.Text.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DiscordEmojiBot.Services;
 
@@ -56,8 +60,8 @@ public sealed class EmojiCommandServiceModule : InteractionModuleBase<SocketInte
 
         int[,] distance = new int[sourceWordCount + 1, targetWordCount + 1];
 
-        for (int i = 0; i <= sourceWordCount; distance[i, 0] = i++);
-        for (int i = 0; i <= targetWordCount; distance[0, i] = i++);
+        for (int i = 0; i <= sourceWordCount; distance[i, 0] = i++) ;
+        for (int i = 0; i <= targetWordCount; distance[0, i] = i++) ;
 
         for (int i = 1; i <= sourceWordCount; i++)
         {
@@ -89,7 +93,7 @@ public sealed class EmojiCommandServiceModule : InteractionModuleBase<SocketInte
         }
 
         int stepsToSame = ComputeLevenshteinDistance(source, target);
-        
+
         return (1.0 - (stepsToSame / (double)Math.Max(source.Length, target.Length)));
     }
 
@@ -156,7 +160,7 @@ public sealed class EmojiCommandServiceModule : InteractionModuleBase<SocketInte
         {
             string currentWord = words[i];
             string[] possibleEmojis = EmojiList.Where(emoji => CalculateSimilarity(currentWord.ToLower(), emoji) > 0.70).ToArray();
-            
+
             if (possibleEmojis.Length > 0)
             {
                 stringBuilder.Append($":{possibleEmojis[Random.Next(0, possibleEmojis.Length)]}:");
@@ -194,18 +198,24 @@ public sealed class EmojiCommandServiceModule : InteractionModuleBase<SocketInte
 
     //}
 
-    [SlashCommand("stats", "I find out your bot stats. :blush:")]
+    //[SlashCommand("stats", "I find out your bot stats. :blush:")]
 
-    //find a way to get guild info 
-    public async Task EmojiStats(IChannel channel)
+    ////find a way to get guild info 
+    //public async Task EmojiStats(IChannel channel)
+    //{
+    //    StringBuilder stringBuilder = new();
+    //    //var guild = _commandHandlerService as SocketGuild;
+    //    var socketChannel = (channel as SocketChannel);
+
+
+    //    stringBuilder.Append(channel);
+    //    await SendMessageResponse(stringBuilder.ToString());
+
+    //}
+
+    [SlashCommand("translate", "translate emojis to text")]
+    public async Task EmojiTranslate(string emojis)
     {
-        StringBuilder stringBuilder = new();
-        //var guild = _commandHandlerService as SocketGuild;
-        var socketChannel = (channel as SocketChannel);
-
-        
-        stringBuilder.Append(channel);
-        await SendMessageResponse(stringBuilder.ToString());
 
     }
 }
